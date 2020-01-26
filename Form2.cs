@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.IO;
 using Octokit;
+using System.Net;
 
 namespace EasyEdit.io
 {
@@ -26,6 +27,18 @@ namespace EasyEdit.io
         private void Form2_Load(object sender, EventArgs e)
         {
             progressBar1.Style = ProgressBarStyle.Marquee;
+            Delay();
+        }
+
+        async Task PutTaskDelay()
+        {
+            await Task.Delay(5000);
+            UpdateGitHub();
+        }
+
+        private async void Delay()
+        {
+            await PutTaskDelay();
         }
 
         private void ProgressBar1_Click(object sender, EventArgs e)
@@ -53,8 +66,30 @@ namespace EasyEdit.io
         {
             var client = new GitHubClient(new ProductHeaderValue("adryzz"));
             var releases = client.Repository.Release.GetAll("adryzz", "EasyEdit.io");
-            var latest = releases[0];
+            Release latest = releases.Result[0];
 
+            using (WebClient wc = new WebClient())
+            {
+                progressBar1.Style = ProgressBarStyle.Continuous;
+                wc.DownloadProgressChanged += wc_DownloadProgressChanged;
+                wc.DownloadFileCompleted += Wc_DownloadFileCompleted;
+                wc.DownloadFileAsync(new Uri(latest.Assets.First().BrowserDownloadUrl), Path.Combine(System.Windows.Forms.Application.StartupPath, "update.exe"));
+                label1.Text = "Downloading update...";
+            }
+        }
+
+        private void Wc_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            AllowClosing = true;
+            Form1.Enabled = true;
+            ControlBox = true;
+            label1.Text = "Download completed!";
+            MessageBox.Show("Download completed!\nNow replace this '.exe' with 'update.exe'", "EasyEdit.io", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            progressBar1.Value = e.ProgressPercentage;
         }
     }
 }
