@@ -64,17 +64,37 @@ namespace EasyEdit.io
 
         private void UpdateGitHub()
         {
-            var client = new GitHubClient(new ProductHeaderValue("adryzz"));
-            var releases = client.Repository.Release.GetAll("adryzz", "EasyEdit.io");
-            Release latest = releases.Result[0];
-
-            using (WebClient wc = new WebClient())
+            try
             {
-                progressBar1.Style = ProgressBarStyle.Continuous;
-                wc.DownloadProgressChanged += wc_DownloadProgressChanged;
-                wc.DownloadFileCompleted += Wc_DownloadFileCompleted;
-                wc.DownloadFileAsync(new Uri(latest.Assets.First().BrowserDownloadUrl), Path.Combine(System.Windows.Forms.Application.StartupPath, "update.exe"));
-                label1.Text = "Downloading update...";
+                var client = new GitHubClient(new ProductHeaderValue("adryzz"));
+                var releases = client.Repository.Release.GetAll("adryzz", "EasyEdit.io");
+                Release latest = releases.Result[0];
+                if (latest.Name.Equals(ProductVersion))
+                {
+                    MessageBox.Show("You are running the latest version!", "EasyEdit.io", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    AllowClosing = true;
+                    Form1.Enabled = true;
+                    Form1.Updating = false;
+                    ControlBox = true;
+                    Close();
+                }
+                using (WebClient wc = new WebClient())
+                {
+                    progressBar1.Style = ProgressBarStyle.Continuous;
+                    wc.DownloadProgressChanged += wc_DownloadProgressChanged;
+                    wc.DownloadFileCompleted += Wc_DownloadFileCompleted;
+                    wc.DownloadFileAsync(new Uri(latest.Assets.First().BrowserDownloadUrl), Path.Combine(System.Windows.Forms.Application.StartupPath, "update.exe"));
+                    label1.Text = "Downloading update...";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message, "EasyEdit.io", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AllowClosing = true;
+                Form1.Enabled = true;
+                Form1.Updating = false;
+                ControlBox = true;
+                Close();
             }
         }
 
@@ -82,6 +102,7 @@ namespace EasyEdit.io
         {
             AllowClosing = true;
             Form1.Enabled = true;
+            Form1.Updating = false;
             ControlBox = true;
             label1.Text = "Download completed!";
             MessageBox.Show("Download completed!\nNow replace this '.exe' with 'update.exe'", "EasyEdit.io", MessageBoxButtons.OK, MessageBoxIcon.Information);
