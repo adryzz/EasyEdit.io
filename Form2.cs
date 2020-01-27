@@ -69,7 +69,7 @@ namespace EasyEdit.io
                 var client = new GitHubClient(new ProductHeaderValue("adryzz"));
                 var releases = client.Repository.Release.GetAll("adryzz", "EasyEdit.io");
                 Release latest = releases.Result[0];
-                if (latest.Name.Equals(ProductVersion))
+                if (latest.Name.Equals(ProductVersion.Remove(ProductVersion.Length -2)))
                 {
                     MessageBox.Show("You are running the latest version!", "EasyEdit.io", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     AllowClosing = true;

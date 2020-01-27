@@ -14,8 +14,8 @@ namespace EasyEdit.io
     public partial class Form1 : Form
     {
         string Path = "";
-        FileStream Stream;
         public bool Updating = false;
+        public List<Property> Properties = new List<Property>();
         public Form1()
         {
             InitializeComponent();
@@ -24,6 +24,27 @@ namespace EasyEdit.io
         private void Form1_Load(object sender, EventArgs e)
         {
             Text = "EasyEdit.io - Not for commercial use";
+        }
+
+        void Form1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+        }
+
+        private void Form1_DragDrop(object sender, DragEventArgs e)
+        {
+            Path = ((string[])e.Data.GetData(DataFormats.FileDrop, false))[0];
+            Text += String.Format(" - File opened: {0}", Path);
+            groupBox1.Enabled = true;
+            groupBox2.Enabled = true;
+            LoadData();
+            GetProperties();
+        }
+
+        private void ListBox1_DoubleClick(object sender, MouseEventArgs e)
+        {
+            Form3 f3 = new Form3(this, (Property)listBox1.SelectedItem);
+            f3.Show(this);
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -36,11 +57,17 @@ namespace EasyEdit.io
                 groupBox1.Enabled = true;
                 groupBox2.Enabled = true;
                 LoadData();
+                GetProperties();
             }
         }
 
         private void Button2_Click(object sender, EventArgs e)
         {
+            if (Path.Equals(""))
+            {
+                MessageBox.Show("Open a file!", "EasyEdit.io", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             SaveData();
         }
 
@@ -56,6 +83,7 @@ namespace EasyEdit.io
         {
             try
             {
+                SetProperties();
                 File.SetAttributes(Path, SetAttributes());
                 File.SetCreationTime(Path, dateTimePicker1.Value);
                 File.SetLastWriteTime(Path, dateTimePicker2.Value);
@@ -64,6 +92,29 @@ namespace EasyEdit.io
             catch (Exception ex)
             {
                 MessageBox.Show(String.Format("Error while saving: {0}", ex.Message), "EasyEdit.io", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void GetProperties()
+        {
+            if (System.IO.Path.GetExtension(Path).ToLower().Equals(".pdf"))
+            {
+                Properties = Utils.GetPDF(Path);
+                listBox1.DataSource = Properties;
+                listBox1.DisplayMember = "key";
+            }
+        }
+
+        private void SetProperties()
+        {
+            if (System.IO.Path.GetExtension(Path).ToLower().Equals(".pdf"))
+            {
+                List<Property> p = new List<Property>();
+                foreach(object o in listBox1.Items)
+                {
+                    p.Add((Property)o);
+                }
+                Utils.SetPDF(p, Path);
             }
         }
 
@@ -232,6 +283,23 @@ namespace EasyEdit.io
             //close logic here
             e.Cancel = Updating;
             base.OnClosing(e);
+        }
+
+        private void AddAttributeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form3 f3 = new Form3(this, new Property("", ""));
+            f3.Show(this);
+        }
+
+        private void RemoveAttributeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach(Property p in Properties)
+            {
+                if (p.Equals((Property)listBox1.SelectedItem))
+                {
+                    Properties.Remove(p);
+                }
+            }
         }
     }
 }

@@ -53,6 +53,11 @@
             this.undoToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.redoToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.undoToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.redoToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.addAttributeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeAttributeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.checkBox12 = new System.Windows.Forms.CheckBox();
             this.checkBox11 = new System.Windows.Forms.CheckBox();
@@ -69,6 +74,7 @@
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
+            this.contextMenuStrip2.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -265,6 +271,7 @@
             // 
             // listBox1
             // 
+            this.listBox1.ContextMenuStrip = this.contextMenuStrip2;
             this.listBox1.Enabled = false;
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Items.AddRange(new object[] {
@@ -273,6 +280,45 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(553, 472);
             this.listBox1.TabIndex = 5;
+            this.listBox1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ListBox1_DoubleClick);
+            // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.undoToolStripMenuItem2,
+            this.redoToolStripMenuItem2,
+            this.addAttributeToolStripMenuItem,
+            this.removeAttributeToolStripMenuItem});
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(166, 92);
+            // 
+            // undoToolStripMenuItem2
+            // 
+            this.undoToolStripMenuItem2.Name = "undoToolStripMenuItem2";
+            this.undoToolStripMenuItem2.Size = new System.Drawing.Size(165, 22);
+            this.undoToolStripMenuItem2.Text = "Undo";
+            this.undoToolStripMenuItem2.Click += new System.EventHandler(this.UndoToolStripMenuItem_Click);
+            // 
+            // redoToolStripMenuItem2
+            // 
+            this.redoToolStripMenuItem2.Name = "redoToolStripMenuItem2";
+            this.redoToolStripMenuItem2.Size = new System.Drawing.Size(165, 22);
+            this.redoToolStripMenuItem2.Text = "Redo";
+            this.redoToolStripMenuItem2.Click += new System.EventHandler(this.RedoToolStripMenuItem_Click);
+            // 
+            // addAttributeToolStripMenuItem
+            // 
+            this.addAttributeToolStripMenuItem.Name = "addAttributeToolStripMenuItem";
+            this.addAttributeToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.addAttributeToolStripMenuItem.Text = "Add attribute";
+            this.addAttributeToolStripMenuItem.Click += new System.EventHandler(this.AddAttributeToolStripMenuItem_Click);
+            // 
+            // removeAttributeToolStripMenuItem
+            // 
+            this.removeAttributeToolStripMenuItem.Name = "removeAttributeToolStripMenuItem";
+            this.removeAttributeToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.removeAttributeToolStripMenuItem.Text = "Remove attribute";
+            this.removeAttributeToolStripMenuItem.Click += new System.EventHandler(this.RemoveAttributeToolStripMenuItem_Click);
             // 
             // groupBox2
             // 
@@ -419,6 +465,7 @@
             // 
             // Form1
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 548);
@@ -435,11 +482,14 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.contextMenuStrip1.ResumeLayout(false);
+            this.contextMenuStrip2.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
@@ -486,6 +536,11 @@
         private System.Windows.Forms.CheckBox checkBox6;
         private System.Windows.Forms.CheckBox checkBox5;
         private System.Windows.Forms.CheckBox checkBox12;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem addAttributeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem removeAttributeToolStripMenuItem;
     }
 }
 
